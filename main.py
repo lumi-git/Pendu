@@ -1,7 +1,7 @@
 import random
 import time
 import requests
-
+import pygame as pg
 
 class Dictionnair:
     def __init__(self):
@@ -66,6 +66,11 @@ class pendu:
         self.maxTry = 15
         self.trys = 0
         self.definition = ""
+        self.ecran = pg.display.set_mode((1200,600))
+        self.surface = pg.Surface((1200,600), pg.SRCALPHA, 32)
+        self.run_ = True
+        self.events = {}
+
     def askLetter(self):
         return input("nouvelle lettre")
 
@@ -99,24 +104,41 @@ class pendu:
         self.wrongLetters.append(letter)
 
     def run(self):
-        self.newWord()
-        self.definition = self.dictionnair.getdef(self.searchedWord)
-        while (self.trys <= self.maxTry):
-            self.affichage()
-            letter = self.askLetter()
-            if len(letter) == 1 :
-                if (letter in self.searchedWord):
-                    self.addLetter(letter)
-                else:
-                    self.stockWrong(letter)
-                    self.trys += 1
-                    if (self.trys == self.maxTry):
-                        print("partie perdue, le mot etait :" + self.searchedWord)
-                        break
+        while self.run_ :
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    pg.quit()
 
-            if (letter == self.searchedWord or self.playerWord == self.searchedWord ):
-                print("partie gagnée, le mot etait :" + self.searchedWord)
-                break
+                if event.type == pg.KEYDOWN:
+                    self.events[event.key] = True
+                if event.type == pg.KEYUP:
+                    self.events[event.key] = False
+
+
+            self.newWord()
+            self.definition = self.dictionnair.getdef(self.searchedWord)
+            while (self.trys <= self.maxTry):
+                self.affichage()
+                letter = self.askLetter()
+                if len(letter) == 1 :
+                    if (letter in self.searchedWord):
+                        self.addLetter(letter)
+                    else:
+                        self.stockWrong(letter)
+                        self.trys += 1
+                        if (self.trys == self.maxTry):
+                            print("partie perdue, le mot etait :" + self.searchedWord)
+                            break
+                else :
+                    if letter != self.searchedWord :
+                        self.trys+=1
+
+                if (letter == self.searchedWord or self.playerWord == self.searchedWord ):
+                    print("partie gagnée, le mot etait :" + self.searchedWord)
+                    break
+            self.surface.fill((0, 0, 0, 0))
+            pg.display.flip()
+
 
 
 if __name__ == "__main__":

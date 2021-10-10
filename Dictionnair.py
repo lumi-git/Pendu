@@ -19,7 +19,7 @@ class Dictionnair :
             userchoice = str(input(stringError + "\n" + string))
         userchoice = int(userchoice)
         return userchoice
-
+    #demande la def
     def getdef(self,word):
 
         self.exeTime = time.time()
